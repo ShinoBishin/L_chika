@@ -6,12 +6,17 @@ blank_time = 10
 
 led_pin = 23
 sw_pin = 17
+sw_pin2 = 27
 
 pi.wiringPiSetupGpio()
 pi.pinMode(led_pin, 1)
 
 pi.pinMode(sw_pin,0)
+pi.pinMode(sw_pin2, 0)
 pi.pullUpDnControl(sw_pin, 2)
+pi.pullUpDnControl(sw_pin, 2)
+
+
 
 #使う変数いろいろセット
 last_time = 0 
@@ -26,7 +31,7 @@ while True:
     now_time = time.time()
 
     if(mode == 0):
-        if(pi.digitalRead(sw_pin) == 0):
+        if(pi.digitalRead(sw_pin2) == 0):
             time.sleep(0.01)
             pi.digitalWrite(led_pin, 0)
             mode = 1
@@ -55,7 +60,7 @@ while True:
                 count = 0
                 sw_mode = 1
     else:
-        if(now_time > last_time + switch_mode_time and before_sw == 1):
+        if(pi.digitalRead(sw_pin2) == 1):
             sw_mode = 1
             mode = 0
             data.append(blank_time)
