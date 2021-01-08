@@ -1,24 +1,9 @@
-import wiringpi as pi
+import RPi.GPIO as GPIO
 import time
-inv_time = 1
-led_L = 23
-sw = 17
 
-pi.wiringPiSetupGpio()
-pi.pinMode(led_L,1)
-pi.pinMode(sw,0)
-pi.pullUpDnControl(sw, PUD_DOWN)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(17, GPIO.IN)
+GPIO.setup(27, GPIO.IN)
 
-light = 0
-
-while True:
-    pi.digitalWrite(led_L,0)
-
-    while(pi.digitalRead(sw) == 1):
-        if(light == 0):
-            pi.digitalWrite(led_L,1)
-            light = 1
-        else:
-            pi.digitalWrite(led_L,0)
-            light = 0
-        time.sleep(inv_time)
+GPIO.output(23,GPIO.LOW)
