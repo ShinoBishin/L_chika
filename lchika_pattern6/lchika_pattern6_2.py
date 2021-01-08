@@ -45,22 +45,15 @@ while time.time() - lead_time < 10:
 #　入ってる値を取り出す
 #　１ならLチカ
 
-for i in range(data):
-    i = data[i]
-    if(i == 1):
-        GPIO.output(led, GPIO.HIGH)
-
-
-
-
-
-    if(data ==1):
-        GPIO.output(led, GPIO.HIGH)
-    else:
-        GPIO.putput(led, GPIO.LOW)
-
-
 print(data)
+
+for i in data:
+    print(i)
+    time.sleep(0.1)
+    if(i == 1):
+        GPIO.output(led,GPIO.HIGH)
+    else:
+        GPIO.output(led,GPIO.LOW)
 
 GPIO.cleanup()
 
