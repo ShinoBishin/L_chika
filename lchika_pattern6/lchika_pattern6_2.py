@@ -20,13 +20,20 @@ GPIO.setup(btn2, GPIO.IN)
 lead_time = time.time()
 
 # btn2の入力により記録モード、入力モードを切り替える
-mode = 0
 count = 0
 data = []
-
 i = 0
 
-
+#　スタンバイモード
+def ready():
+    global count
+    while True:
+        GPIO.output(led, GPIO.HIGH)
+        time.sleep(1)
+        GPIO.output(led, GPIO.LOW)
+        time.sleep(1)
+        
+#　記録モード
 def btn_read():
     GPIO.output(led, GPIO.HIGH)
     time.sleep(1)
@@ -35,9 +42,7 @@ def btn_read():
         data.append(GPIO.input(btn1))
         time.sleep(0.1)
 
-#　for文でdata内のデータを最後まで調べる
-#　入ってる値を取り出す
-#　１ならLチカ
+# 点灯モード
 def led_on():
     GPIO.output(led,GPIO.LOW)
     for i in data:
@@ -47,27 +52,22 @@ def led_on():
         else:
             GPIO.output(led,GPIO.LOW)
 
-btn_read()
-led_on()
+# スイッチの状態を監視、count変数の状態を判定してモードチェンジする
+while True:
+    if(GPIO.input(btn2) == 1):
+        count = count + 1
+        print(str(count))
+        while(GPIO.input(btn2) == 1):
+            time.sleep(0.1)
+            if (count >= 3):
+                count = 0
 
-
-# while True:
-#     if(GPIO.input(btn2) == 1):
-#         count = count + 1
-#         print(str(count))
-#         while(GPIO.input(btn2) == 1):
-#             time.sleep(0.1)
-#             if (count >= 3 ):
-#                 count = 0
-
-# if(count == 1):
-#     time.sleep(0.1)
-#     GPIO.output(led, GPIO.HIGH)
-# elif(count == 2):
-#     btn_read()
-# else:
-#     led_on()
-
+    if (count == 1):
+        ready()
+    elif(count == 2):
+        btn_read()
+    else:
+        led_on()
 
 GPIO.cleanup()
 
