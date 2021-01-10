@@ -21,39 +21,53 @@ lead_time = time.time()
 
 # btn2の入力により記録モード、入力モードを切り替える
 mode = 0
-
+count = 0
 data = []
 
 i = 0
 
-# def led():
-#     while True:
-#         if(data == 1):
-#             GPIO.output(led, GPIO.HIGH)
-#             time.sleep(0.1)
-#         else:
-#             GPIO.output(led, GPIO.LOW)
-#             time.sleep(0.1)
 
-
-while time.time() - lead_time < 10:
-    print(GPIO.input(btn1))
-    time.sleep(0.1)
-    data.append(GPIO.input(btn1))
+def btn_read():
+    GPIO.output(led, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(led,GPIO.LOW)
+    while time.time() - lead_time < 10:
+        data.append(GPIO.input(btn1))
+        time.sleep(0.1)
 
 #　for文でdata内のデータを最後まで調べる
 #　入ってる値を取り出す
 #　１ならLチカ
+def led_on():
+    GPIO.output(led,GPIO.LOW)
+    for i in data:
+        time.sleep(0.1)
+        if(i == 1):
+            GPIO.output(led,GPIO.HIGH)
+        else:
+            GPIO.output(led,GPIO.LOW)
 
-print(data)
+btn_read()
+led_on()
 
-for i in data:
-    print(i)
-    time.sleep(0.1)
-    if(i == 1):
-        GPIO.output(led,GPIO.HIGH)
-    else:
-        GPIO.output(led,GPIO.LOW)
+
+# while True:
+#     if(GPIO.input(btn2) == 1):
+#         count = count + 1
+#         print(str(count))
+#         while(GPIO.input(btn2) == 1):
+#             time.sleep(0.1)
+#             if (count >= 3 ):
+#                 count = 0
+
+# if(count == 1):
+#     time.sleep(0.1)
+#     GPIO.output(led, GPIO.HIGH)
+# elif(count == 2):
+#     btn_read()
+# else:
+#     led_on()
+
 
 GPIO.cleanup()
 
