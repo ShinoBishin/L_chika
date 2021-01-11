@@ -26,13 +26,13 @@ i = 0
 
 #　スタンバイモード
 def ready():
-    global count
     while True:
         GPIO.output(led, GPIO.HIGH)
         time.sleep(1)
         GPIO.output(led, GPIO.LOW)
         time.sleep(1)
-        
+        if(GPIO.input(btn2) == 1):
+            break
 #　記録モード
 def btn_read():
     GPIO.output(led, GPIO.HIGH)
@@ -52,22 +52,24 @@ def led_on():
         else:
             GPIO.output(led,GPIO.LOW)
 
+
 # スイッチの状態を監視、count変数の状態を判定してモードチェンジする
+
+
 while True:
     if(GPIO.input(btn2) == 1):
         count = count + 1
         print(str(count))
         while(GPIO.input(btn2) == 1):
             time.sleep(0.1)
-            if (count >= 3):
+            if (count >= 2):
                 count = 0
 
-    if (count == 1):
-        ready()
-    elif(count == 2):
-        btn_read()
-    else:
-        led_on()
+if (count == 1):
+    btn_read()
+if(count == 2):
+    led_on()
 
-GPIO.cleanup()
+
+
 
