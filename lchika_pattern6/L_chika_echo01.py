@@ -1,6 +1,4 @@
-# ボタンからの入力データを配列に記録する
-# 配列に記録したデータを取り出してLEDを点灯する
-# 切り替え用ボタンを使って記録、点灯モードを切り替える
+#切り替えスイッチなしver.
 
 import RPi.GPIO as GPIO
 import time
@@ -8,13 +6,11 @@ import time
 # デバイスの接続先
 led = 23
 btn1 = 17
-btn2 = 27
 
 # GPIOの初期化
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(led, GPIO.OUT)
 GPIO.setup(btn1, GPIO.IN)
-GPIO.setup(btn2, GPIO.IN)
 
 # 時間計測用変数
 lead_time = time.time()
@@ -22,16 +18,17 @@ lead_time = time.time()
 # btn2の入力により記録モード、入力モードを切り替える
 count = 0
 data = []
-i = 0
+
 
 #　スタンバイモード
 def ready():
-    while (i < 1):
+    num = 0
+    while (num <= 1):
         GPIO.output(led, GPIO.HIGH)
         time.sleep(1)
         GPIO.output(led, GPIO.LOW)
         time.sleep(1)
-        i = i + 1
+        num = num + 1
 
 #　記録モード
 def btn_read():
@@ -51,22 +48,13 @@ def led_on():
             GPIO.output(led,GPIO.LOW)
 
 
-# スイッチの状態を監視、count変数の状態を判定してモードチェンジする
+ready()
+btn_read()
+print("入力モード終了")
+time.sleep(1)
+led_on()
 
-
-while (count <= 1):
-    if(GPIO.input(btn2) == 1):
-        count = count + 1
-        print(str(count))
-        while(GPIO.input(btn2) == 1):
-            time.sleep(0.1)
-            
-
-    if (count == 1):
-        btn_read()
-    if(count == 2):
-        led_on()
-        GPIO.cleanup()
+GPIO.cleanup()
 
 
 
