@@ -23,6 +23,7 @@ lead_time = time.time()
 count = 0
 data = []
 i = 0
+select = 0
 
 #　スタンバイモード
 def ready():
@@ -35,9 +36,14 @@ def ready():
 
 #　記録モード
 def btn_read():
+    print("記録モード開始")
     while time.time() - lead_time < 10:
         data.append(GPIO.input(btn1))
         time.sleep(0.1)
+        if(time.time() - lead_time < 10):
+            print("記録モード終了")
+            if(GPIO.input(btn2) == 1):
+                select = 2
     
 
 
@@ -54,20 +60,28 @@ def led_on():
 # スイッチの状態を監視、count変数の状態を判定してモードチェンジする
 
 
-while (count <= 1):
-    if(GPIO.input(btn2) == 1):
-        count = count + 1
-        print(str(count))
-        while(GPIO.input(btn2) == 1):
-            time.sleep(0.1)
-            
+try:
+    while True:
+        if(GPIO.input(btn2) == 1):
+            time.sleep(0.01)
+            if(select == 0):
+                select = 1
+                print("スタンバイ")
+            elif(select == 1):
+                print("記録モード展開")
+                while time.time() - lead_time < 10:
+                    data.append(GPIO.input(btn1))
+                    time.sleep(0.1)
+                    if (time.time() - lead_time) == 1:
+                        print("記録モード終了")
+            elif(select == 2):
+                print("点灯モード展開")
+            while(GPIO.input(btn2) == 1):
+                time.sleep(0.01)
 
-    if (count == 1):
-        btn_read()
-    if(count == 2):
-        led_on()
-        GPIO.cleanup()
-
-
-
-
+    
+except KeyboardInterrupt:
+    pass
+finally:
+    print("終了処理中・・・\n終了しました")
+    GPIO.cleanup()
