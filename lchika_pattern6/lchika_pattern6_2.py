@@ -16,39 +16,26 @@ GPIO.setup(led, GPIO.OUT)
 GPIO.setup(btn1, GPIO.IN)
 GPIO.setup(btn2, GPIO.IN)
 
-# 時間計測用変数
-lead_time = time.time()
-
-# btn2の入力により記録モード、入力モードを切り替える
-count = 0
-data = []
-i = 0
-select = 0
-
 #　スタンバイモード
 def ready():
-    while (i < 1):
+    for i in range(2):
         GPIO.output(led, GPIO.HIGH)
         time.sleep(1)
         GPIO.output(led, GPIO.LOW)
         time.sleep(1)
-        i = i + 1
 
 #　記録モード
-def btn_read():
+def btn_read(data):
+    # 時間計測用変数
+    lead_time = time.time()
     print("記録モード開始")
     while time.time() - lead_time < 10:
         data.append(GPIO.input(btn1))
         time.sleep(0.1)
-        if(time.time() - lead_time < 10):
-            print("記録モード終了")
-            if(GPIO.input(btn2) == 1):
-                select = 2
-    
-
 
 # 点灯モード
-def led_on():
+def led_on(data):
+    print("点灯モード開始")
     for i in data:
         time.sleep(0.1)
         if(i == 1):
@@ -57,28 +44,45 @@ def led_on():
             GPIO.output(led,GPIO.LOW)
 
 
+
 # スイッチの状態を監視、count変数の状態を判定してモードチェンジする
-
-
 try:
+    data = []
+    mode = 0
     while True:
-        if(GPIO.input(btn2) == 1):
+        # モード切替をボタンを読み取って実施する
+        if (GPIO.input(btn2) == 1):
             time.sleep(0.01)
-            if(select == 0):
-                select = 1
-                print("スタンバイ")
-            elif(select == 1):
-                print("記録モード展開")
-                while time.time() - lead_time < 10:
-                    data.append(GPIO.input(btn1))
-                    time.sleep(0.1)
-                    if (time.time() - lead_time) == 1:
-                        print("記録モード終了")
-            elif(select == 2):
-                print("点灯モード展開")
-            while(GPIO.input(btn2) == 1):
-                time.sleep(0.01)
+            mode += 1
+        print(mode)
 
+        # モードごとの処理を実施する
+        if(mode == 1):
+            print("スタンバイを開始します")
+            ready()
+            mode += 1
+            print("スタンバイを終了")
+        elif(mode == 2):
+            pass
+        elif(mode == 3):
+            print("記録モードを開始")
+            btn_read(data)
+            mode += 1
+            print("点灯モードを終了します")
+        elif(mode == 4):
+            pass
+        elif(mode == 5):
+            print("点灯モードを開始します")
+            led_on(data)
+            # 各データを初期化
+            data = []
+            mode = 0
+            print("点灯モードを終了します")
+            print("再度初期状態へ戻ります")
+        else:
+            pass
+        
+        time.sleep(0.1)
     
 except KeyboardInterrupt:
     pass
